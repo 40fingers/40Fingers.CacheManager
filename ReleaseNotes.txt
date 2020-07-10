@@ -1,0 +1,14 @@
+﻿<h3>CacheManager</h3>
+<p class="Contributor">
+	www.40fingers.net <br />
+	<a href="mailto:support@40fingers.net">support@40fingers.net</a><br />
+	<a href=http://www.40fingers.net>http://www.40fingers.net</a><br />
+</p>
+<hr/>
+<div class="License">
+	<h3>About the CacheManager</h3>
+	<p class="Owner">
+		<b>Version 1.0.0</b><br /><br />
+	</p>
+	<p>This is just a modules with a Clear Cache button to be able to  allow admins to clear the cache when some modules are failing to do so.</p>
+</div>

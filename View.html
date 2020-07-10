@@ -1,0 +1,40 @@
+﻿[JavaScript:{ jsname: "JQuery" }]
+[JavaScript:{ path: "~/Resources/Shared/scripts/dnn.jquery.js"}]
+
+[ModuleAction:{ controlKey : "Edit",
+                securityAccessLevel : "Edit",
+                titleKey: "EditModule",
+                localResourceFile: "~/DesktopModules/40Fingers/CacheManager/App_LocalResources/View.resx"
+}]
+
+<div id="Items-[ModuleContext:ModuleId]">
+    <button type="button" id="clearCache[ModuleContext:ModuleId]">Clear Cache</button>
+</div>
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function() {
+        $("#clearCache[ModuleContext:ModuleId]").on("click",
+            function() {
+                var service = {
+                    path: "40Fingers/CacheManager",
+                    framework: $.ServicesFramework([ModuleContext:ModuleId])
+                };
+                service.baseUrl = service.framework.getServiceRoot(service.path) + "CacheManager/";
+
+                var jqXHR = $.ajax({
+                    method: "POST",
+                    url: service.baseUrl,
+                    beforeSend: service.framework.setModuleHeaders,
+                    dataType: "json"
+                }).done(function (data) {
+                    window.location.reload(false); 
+                }).fail(function (data) {
+                    alert("Clear cache failed"); 
+                }).always(function (data) {
+                });
+
+            }
+        );
+    });
+
+</script>

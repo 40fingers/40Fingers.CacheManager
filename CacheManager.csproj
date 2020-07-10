@@ -145,8 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
-    <Content Include="Sql\00.00.01.SqlDataProvider" />
-    <Content Include="Sql\Uninstall.SqlDataProvider" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

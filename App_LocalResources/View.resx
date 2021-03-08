@@ -133,6 +133,6 @@
     <value>Edit</value>
   </data>
   <data name="EditModule.Text" xml:space="preserve">
-    <value>Add Item</value>
+    <value>Edit Configuration</value>
   </data>
 </root>

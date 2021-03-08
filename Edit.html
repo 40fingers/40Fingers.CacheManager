@@ -1,0 +1,126 @@
+﻿[JavaScript:{ jsname: "JQuery" }]
+[JavaScript:{ path: "~/Resources/Shared/scripts/dnn.jquery.js"}]
+
+<div id="Items-[ModuleContext:ModuleId]" class="dnnForm">
+    <fieldset>
+        <div class="dnnFormItem">
+            <label class="dnnLabel" for="clearCacheKeys">Keys</label>
+            <textarea rows="10" id="clearCacheKeys"></textarea>
+        </div>
+        <div class="dnnFormItem">
+            <label class="dnnLabel" for="currentCacheKeys">Current Keys</label>
+            <select id="currentCacheKeysList" size="10">
+            </select>
+        </div>
+        <div class="dnnFormItem">
+            <label class="dnnLabel" for="currentCacheKey">Key</label>
+            <div id="currentCacheKey">
+            </div>
+        </div>
+        <div class="dnnFormItem">
+            <label class="dnnLabel" for="currentCacheKeyType">Type</label>
+            <div id="currentCacheKeyType">
+            </div>
+        </div>
+        <div class="dnnFormItem">
+            <label class="dnnLabel" for="currentCacheKeyContents">Contents</label>
+            <pre id="currentCacheKeyContent" style="max-height: 200px; overflow: scroll;">
+
+            </pre>
+        </div>
+        <div class="dnnFormItem">
+            <label class="dnnLabel" for="currentCacheKeys">Task status</label>
+            <select id="clearCacheTaskStatus">
+                <option value="disabled">Disabled</option>
+                <option value="enabled">Enabled</option>
+            </select>
+        </div>
+    </fieldset>
+    <button type="button" id="saveKeys[ModuleContext:ModuleId]">Save Keys</button>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var cmservice;
+    $(document).ready(function () {
+        cmservice = {
+            path: "40Fingers/CacheManager",
+            framework: $.ServicesFramework("[ModuleContext:ModuleId]")
+        };
+        cmservice.baseUrl = cmservice.framework.getServiceRoot(cmservice.path) + "CacheManager/";
+
+        $("#saveKeys[ModuleContext:ModuleId]").on("click",
+            function () {
+
+                var postdata = {
+                    Keys: $("#clearCacheKeys").val(),
+                    TaskEnabled: ($("#clearCacheTaskStatus").val() == "enabled")
+                };
+
+                var jqXHR = $.ajax({
+                    method: "POST",
+                    url: cmservice.baseUrl + "saveKeys",
+                    beforeSend: cmservice.framework.setModuleHeaders,
+                    data: postdata,
+                    dataType: "json"
+                }).done(function (data) {
+                }).fail(function (data) {
+                    alert("save keys failed");
+                }).always(function (data) {
+                });
+
+            }
+        );
+
+        $("#currentCacheKeysList").on("change", () => { getSelectedKey(); });
+
+        $.ajax({
+            method: "GET",
+            url: cmservice.baseUrl + "getSetting",
+            beforeSend: cmservice.framework.setModuleHeaders,
+            dataType: "json"
+        }).done(function (data) {
+            $("#clearCacheKeys").val(JSON.stringify(data.Keys, null, 2));
+            if (data.TaskEnabled) {
+                $("#clearCacheTaskStatus").val("enabled");
+            } else {
+                $("#clearCacheTaskStatus").val("disabled");
+            }
+        }).fail(function (data) {
+            alert("get setting failed");
+        }).always(function (data) {
+        });
+
+        $.ajax({
+            method: "GET",
+            url: cmservice.baseUrl + "getKeys",
+            beforeSend: cmservice.framework.setModuleHeaders,
+            dataType: "json"
+        }).done(function (data) {
+            $("#currentCacheKeysList option").remove();
+            data.Keys.forEach((k, i) => {
+                $("#currentCacheKeysList").append(`<option value=\"${k.Key}\">${k.Key} - Type: ${k.Type}</option>`);
+            });
+        }).fail(function (data) {
+            alert("get keys failed");
+        }).always(function (data) {
+        });
+    });
+
+    function getSelectedKey() {
+        $.ajax({
+            method: "GET",
+            url: cmservice.baseUrl + "getKey?key=" + $("#currentCacheKeysList").val(),
+            beforeSend: cmservice.framework.setModuleHeaders,
+            dataType: "json"
+        }).done(function (data) {
+            $("#currentCacheKey").text(data.Key);
+            $("#currentCacheKeyType").text(data.Type);
+            $("#currentCacheKeyContent").text(data.Contents);
+        }).fail(function (data) {
+            alert("get keys failed");
+        }).always(function (data) {
+        });
+
+
+    }
+</script>

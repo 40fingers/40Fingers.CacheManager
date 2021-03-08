@@ -96,8 +96,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\BaseClasses\ApiControllerBase.cs" />
+    <Compile Include="Components\CacheKeysModel.cs" />
+    <Compile Include="Components\ConditionalCacheClearerTask.cs" />
+    <Compile Include="Components\Constants.cs" />
     <Compile Include="Components\DataProviderHelper.cs" />
     <Compile Include="Components\FeatureController.cs" />
+    <Compile Include="Components\SchedulerHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CacheManagerController.cs" />
     <Compile Include="Services\ServiceRouteMapper.cs" />
@@ -110,6 +114,7 @@
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
+    <Content Include="Edit.html" />
     <Content Include="_external\DotNetNuke.dll" />
     <Content Include="_external\DotNetNuke.Web.Client.dll" />
     <Content Include="_external\DotNetNuke.Web.dll" />

@@ -19,7 +19,7 @@ namespace FortyFingers.CacheManager.Services
             mapRouteManager.MapHttpRoute(
                 moduleFolderName: "40Fingers/CacheManager",
                 routeName: "default",
-                url: "{controller}/{itemId}",
+                url: "{controller}/{action}/{itemId}",
                 defaults: new { action = RouteParameter.Optional, itemId = RouteParameter.Optional },
                 namespaces: new[] { "FortyFingers.CacheManager.Services" });
         }

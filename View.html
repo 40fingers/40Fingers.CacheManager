@@ -8,7 +8,14 @@
 }]
 
 <div id="Items-[ModuleContext:ModuleId]">
-    <button type="button" id="clearCache[ModuleContext:ModuleId]">Clear Cache</button>
+    <p>
+        Use this button if you want to clear only the cached items that are configured in this modules' settings.
+    </p>
+    <button type="button" id="clearCacheKeys[ModuleContext:ModuleId]">Clear Configured Cache</button>
+    <p>
+        Use this button if you want to clear the full DNN Cache.
+    </p>
+    <button type="button" id="clearCache[ModuleContext:ModuleId]">Clear Full DNN Cache</button>
 </div>
 
 <script language="javascript" type="text/javascript">
@@ -23,7 +30,7 @@
 
                 var jqXHR = $.ajax({
                     method: "POST",
-                    url: service.baseUrl,
+                    url: service.baseUrl + 'ClearCache',
                     beforeSend: service.framework.setModuleHeaders,
                     dataType: "json"
                 }).done(function (data) {
@@ -32,7 +39,29 @@
                     alert("Clear cache failed"); 
                 }).always(function (data) {
                 });
+                return false;
+            }
+        );
+        $("#clearCacheKeys[ModuleContext:ModuleId]").on("click",
+            function() {
+                var service = {
+                    path: "40Fingers/CacheManager",
+                    framework: $.ServicesFramework([ModuleContext:ModuleId])
+                };
+                service.baseUrl = service.framework.getServiceRoot(service.path) + "CacheManager/";
 
+                var jqXHR = $.ajax({
+                    method: "POST",
+                    url: service.baseUrl + 'ClearCacheKeys',
+                    beforeSend: service.framework.setModuleHeaders,
+                    dataType: "json"
+                }).done(function (data) {
+                    window.location.reload(false); 
+                }).fail(function (data) {
+                    alert("Clear cache failed"); 
+                }).always(function (data) {
+                });
+                return false;
             }
         );
     });

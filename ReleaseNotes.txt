@@ -8,6 +8,21 @@
 <div class="License">
 	<h3>About the CacheManager</h3>
 	<p class="Owner">
+		<b>Version 2.1.0</b><br /><br />
+	</p>
+	<ul>
+		<li>Option to match keys with regexes</li>
+	</ul>
+	<p>This version adds some "real" functionality:</p>
+	<p class="Owner">
+		<b>Version 2.0.0</b><br /><br />
+	</p>
+	<p>This version adds some "real" functionality:</p>
+	<ul>
+		<li>Options to clear cached items based on a SQL query</li>
+		<li>Option to only clear configured cached items</li>
+	</ul>
+	<p class="Owner">
 		<b>Version 1.0.0</b><br /><br />
 	</p>
 	<p>This is just a modules with a Clear Cache button to be able to  allow admins to clear the cache when some modules are failing to do so.</p>

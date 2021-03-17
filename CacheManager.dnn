@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="40Fingers.CacheManager" type="Module" version="01.00.00">
+    <package name="40Fingers.CacheManager" type="Module" version="02.01.00">
       <friendlyName>40F CacheManager</friendlyName>
       <description>40Fingers CacheManager module</description>
       <iconFile>~/Icons/Sigma/Software_32X32_Standard.png</iconFile>
@@ -47,7 +47,7 @@
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
-                    <controlKey />
+                    <controlKey>Edit</controlKey>
                     <controlSrc>DesktopModules/40Fingers/CacheManager/Edit.html</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle />

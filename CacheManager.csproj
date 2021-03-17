@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="Components\BaseClasses\ApiControllerBase.cs" />
     <Compile Include="Components\CacheKeysModel.cs" />
+    <Compile Include="Components\Common.cs" />
     <Compile Include="Components\ConditionalCacheClearerTask.cs" />
     <Compile Include="Components\Constants.cs" />
     <Compile Include="Components\DataProviderHelper.cs" />

@@ -45,9 +45,24 @@ namespace FortyFingers.CacheManager.Services
         [ValidateAntiForgeryToken]
         public HttpResponseMessage ClearCacheKeys()
         {
-            DataCache.ClearCache();
-            ClientResourceManager.ClearCache();
+            var setting = PortalController.GetPortalSetting(Constants.PsCacheKeysToClear(PortalSettings.PortalId), PortalSettings.PortalId, null);
+            var cacheKeysModel = new CacheKeysModel();
+            if (!string.IsNullOrEmpty(setting))
+            {
+                try
+                {
+                    cacheKeysModel.Keys = JsonConvert.DeserializeObject<List<CacheKeyModel>>(setting);
+                }
+                catch
+                {
+                    cacheKeysModel.Keys = new List<CacheKeyModel>();
+                }
+            }
 
+            foreach (var cachedKey in cacheKeysModel.Keys)
+            {
+                DataCache.RemoveCache(cachedKey.Key);
+            }
             return Request.CreateResponse(System.Net.HttpStatusCode.NoContent);
         }
 
@@ -82,6 +97,36 @@ namespace FortyFingers.CacheManager.Services
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+        [ActionName("MatchKeys")]
+        public HttpResponseMessage MatchKeys()
+        {
+            try
+            {
+                var keys = Request.GetHttpContext().Request["Keys"];
+                var model = new CacheKeysModel();
+                model.Keys = JsonConvert.DeserializeObject<List<CacheKeyModel>>(keys);
+
+                var currentKeys = Common.GetCurrentCachedKeys();
+                var retval = new List<string>();
+                foreach (var cacheKeyModel in model.Keys)
+                {
+                    retval.Add($"BEGIN KEY {cacheKeyModel.Key}");
+                    retval.AddRange(Common.GetMatchingCachedKeys(currentKeys, cacheKeyModel));
+                    retval.Add($"END KEY");
+                    retval.Add("");
+                }
+                
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, retval);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid Json");
+            }
+        }
+
         [HttpGet]
         [ValidateAntiForgeryToken]
         [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
@@ -108,6 +153,7 @@ namespace FortyFingers.CacheManager.Services
                 {
                     retval = new CacheKeysModel();
                     retval.Keys.Add(new CacheKeyModel() { Key = $"DNN_Folders{PortalSettings.PortalId}", Query = "SELECT CASE WHEN EXISTS(SELECT * FROM Folders WHERE LastModifiedOnDate > [LASTCLEARED]) THEN 1 ELSE 0 END" });
+                    retval.Keys.Add(new CacheKeyModel() { Key = $"DNN_Folders\\d*", IsRegex = true, Query = "SELECT CASE WHEN EXISTS(SELECT * FROM Folders WHERE LastModifiedOnDate > [LASTCLEARED]) THEN 1 ELSE 0 END" });
                 }
 
                 var sLastCleared = PortalController.GetPortalSetting(Constants.PsLastCacheCleared(PortalSettings.PortalId), PortalSettings.PortalId, "");
@@ -135,14 +181,7 @@ namespace FortyFingers.CacheManager.Services
             try
             {
                 var retval = new CurrentKeysModel();
-                var cp = CachingProvider.Instance();
-                IDictionaryEnumerator cacheEnum = cp.GetEnumerator();
-                while (cacheEnum.MoveNext())
-                {
-                    var o = cp.GetItem(cacheEnum.Key.ToString());
-                    retval.Keys.Add(new CurrentKeyModel() { Key = cacheEnum.Key.ToString(), Size = 0, Type = o.GetType().Name });
-                }
-                //var retval = new StringBuilder();
+                retval.Keys = Common.GetCurrentCachedKeys();
                 retval.Keys = retval.Keys.OrderBy(model => model.Key).ToList();
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, retval);
             }
@@ -151,6 +190,8 @@ namespace FortyFingers.CacheManager.Services
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error occurred");
             }
         }
+
+
         [HttpGet]
         [ValidateAntiForgeryToken]
         [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]

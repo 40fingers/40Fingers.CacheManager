@@ -16,9 +16,9 @@ namespace FortyFingers.CacheManager.Components
     public class CacheKeyModel
     {
         public string Key { get; set; }
+        public bool IsRegex { get; set; }
         public string Query { get; set; }
     }
-
     public class CurrentKeysModel
     {
         public List<CurrentKeyModel> Keys { get; set; } = new List<CurrentKeyModel>();

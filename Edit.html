@@ -3,40 +3,53 @@
 
 <div id="Items-[ModuleContext:ModuleId]" class="dnnForm">
     <fieldset>
-        <div class="dnnFormItem">
-            <label class="dnnLabel" for="clearCacheKeys">Keys</label>
-            <textarea rows="10" id="clearCacheKeys"></textarea>
-        </div>
-        <div class="dnnFormItem">
-            <label class="dnnLabel" for="currentCacheKeys">Current Keys</label>
-            <select id="currentCacheKeysList" size="10">
+        <p>
+            <label for="clearCacheKeys">Keys</label>
+            <br />
+            <textarea rows="10" id="clearCacheKeys" style="width: 100%;"></textarea>
+        </p>
+        <p>
+            <label for="currentCacheKeys">Current Keys</label>
+            <br />
+            <select id="currentCacheKeysList" size="10" style="width: 100%;">
             </select>
-        </div>
-        <div class="dnnFormItem">
-            <label class="dnnLabel" for="currentCacheKey">Key</label>
+        </p>
+        <p>
+            <label for="currentCacheKey">Key</label>
+            <br />
             <div id="currentCacheKey">
             </div>
-        </div>
-        <div class="dnnFormItem">
-            <label class="dnnLabel" for="currentCacheKeyType">Type</label>
-            <div id="currentCacheKeyType">
+        </p>
+        <p>
+            <label for="currentCacheKeyType">Type</label>
+            <br />
+            <div id="currentCacheKeyType" style="width: 100%;">
             </div>
-        </div>
-        <div class="dnnFormItem">
-            <label class="dnnLabel" for="currentCacheKeyContents">Contents</label>
-            <pre id="currentCacheKeyContent" style="max-height: 200px; overflow: scroll;">
+        </p>
+        <p>
+            <label for="currentCacheKeyContents">Contents</label>
+            <br />
+            <pre id="currentCacheKeyContent" style="max-height: 200px; overflow: scroll; width: 100%;">
 
             </pre>
-        </div>
-        <div class="dnnFormItem">
-            <label class="dnnLabel" for="currentCacheKeys">Task status</label>
-            <select id="clearCacheTaskStatus">
+        </p>
+        <p>
+            <label for="currentCacheKeys">Task status</label>
+            <br />
+            <select id="clearCacheTaskStatus" style="width: 100%;">
                 <option value="disabled">Disabled</option>
                 <option value="enabled">Enabled</option>
             </select>
-        </div>
+        </p>
     </fieldset>
-    <button type="button" id="saveKeys[ModuleContext:ModuleId]">Save Keys</button>
+    <button type="button" id="saveKeys[ModuleContext:ModuleId]" class="dnnPrimaryAction">Save Keys</button>
+    <button type="button" id="matchKeys[ModuleContext:ModuleId]" class="dnnPrimaryAction">Match Keys (Test)</button>
+    <p id="matchedKeys">
+        <label for="matchedKeysList">Matched:</label>
+        <br />
+        <select id="matchedKeysList" size="10" style="width: 100%;">
+        </select>
+    </p>
 </div>
 
 <script language="javascript" type="text/javascript">
@@ -47,6 +60,8 @@
             framework: $.ServicesFramework("[ModuleContext:ModuleId]")
         };
         cmservice.baseUrl = cmservice.framework.getServiceRoot(cmservice.path) + "CacheManager/";
+
+        $("#matchedKeys").hide();
 
         $("#saveKeys[ModuleContext:ModuleId]").on("click",
             function () {
@@ -65,6 +80,40 @@
                 }).done(function (data) {
                 }).fail(function (data) {
                     alert("save keys failed");
+                }).always(function (data) {
+                });
+            }
+        );
+
+        $("#matchKeys[ModuleContext:ModuleId]").on("click",
+            function () {
+                $("#matchedKeysList option").remove();
+
+                const json = $("#clearCacheKeys").val();
+                try {
+                    const dummy = JSON.parse(json);
+                } catch (e) {
+                    alert("Invalid JSON");
+                    return;
+                } 
+                var postdata = {
+                    Keys: $("#clearCacheKeys").val(),
+                };
+
+                var jqXHR = $.ajax({
+                    method: "POST",
+                    url: cmservice.baseUrl + "matchKeys",
+                    beforeSend: cmservice.framework.setModuleHeaders,
+                    data: postdata,
+                    dataType: "json"
+                }).done(function (data) {
+                    data.forEach((k, i) => {
+                        $("#matchedKeysList").append(`<option value=\"${k}\">${k}</option>`);
+                    });
+                    $("#matchedKeys").show();
+
+                }).fail(function (data) {
+                    alert("match keys failed");
                 }).always(function (data) {
                 });
 

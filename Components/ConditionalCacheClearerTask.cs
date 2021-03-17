@@ -40,14 +40,20 @@ namespace FortyFingers.CacheManager.Components
                             Constants.PsLastCacheCleared(portal.PortalID),
                             DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
+                        var currentKeys = Common.GetCurrentCachedKeys();
+                        
                         foreach (CacheKeyModel keyModel in keysModel)
                         {
                             // we make the query work regardless of the LASTCLEARED token being quoted
                             var sql = keyModel.Query.Replace("'[LASTCLEARED]'", "[LASTCLEARED]").Replace("[LASTCLEARED]", $"'{sLastCleared}'");
                             if (DataContext.Instance().ExecuteScalar<bool>(CommandType.Text, sql))
                             {
-                                DataCache.RemoveCache(keyModel.Key);
-                                cntClear++;
+                                var keysToClear = Common.GetMatchingCachedKeys(currentKeys, keyModel);
+                                foreach (var keyToClear in keysToClear)
+                                {
+                                    DataCache.RemoveCache(keyToClear);
+                                    cntClear++;
+                                }
                             }
 
                             cntCheck++;
@@ -55,10 +61,10 @@ namespace FortyFingers.CacheManager.Components
                         }
                     }
 
-                    Progressing();
-
                     ScheduleHistoryItem.AddLogNote($"{cntCheck} Cache items checked, cleared {cntClear}");
                     ScheduleHistoryItem.Succeeded = true;
+                    
+                    Completed();
                 }
             }
             catch (Exception e)

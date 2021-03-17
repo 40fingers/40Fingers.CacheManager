@@ -9,19 +9,20 @@
 
 <div id="Items-[ModuleContext:ModuleId]">
     <p>
-        Use this button if you want to clear only the cached items that are configured in this modules' settings.
+        Use this button if you want to clear only the cached items that are configured in this modules' settings.<br />
+        <button class="dnnPrimaryAction" type="button" id="clearCacheKeys[ModuleContext:ModuleId]">Clear Configured Cache</button>
     </p>
-    <button type="button" id="clearCacheKeys[ModuleContext:ModuleId]">Clear Configured Cache</button>
     <p>
-        Use this button if you want to clear the full DNN Cache.
+        Use this button if you want to clear the full DNN Cache.<br/>
+        <button class="dnnPrimaryAction" type="button" id="clearCache[ModuleContext:ModuleId]">Clear Full DNN Cache</button>
     </p>
-    <button type="button" id="clearCache[ModuleContext:ModuleId]">Clear Full DNN Cache</button>
 </div>
 
 <script language="javascript" type="text/javascript">
     $(document).ready(function() {
         $("#clearCache[ModuleContext:ModuleId]").on("click",
-            function() {
+            function(event) {
+                event.preventDefault();
                 var service = {
                     path: "40Fingers/CacheManager",
                     framework: $.ServicesFramework([ModuleContext:ModuleId])
@@ -43,7 +44,8 @@
             }
         );
         $("#clearCacheKeys[ModuleContext:ModuleId]").on("click",
-            function() {
+            function (event) {
+                event.preventDefault();
                 var service = {
                     path: "40Fingers/CacheManager",
                     framework: $.ServicesFramework([ModuleContext:ModuleId])

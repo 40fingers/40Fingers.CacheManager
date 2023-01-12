@@ -205,7 +205,7 @@ namespace FortyFingers.CacheManager.Services
                 IDictionaryEnumerator cacheEnum = cp.GetEnumerator();
                 var o = cp.GetItem(key);
                 retval.Key = key;
-                retval.Type = o.GetType().FullName;
+                retval.Type = o?.GetType().FullName;
                 try
                 {
                     retval.Contents = JsonConvert.SerializeObject(o, Formatting.Indented);
